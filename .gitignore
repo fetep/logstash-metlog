@@ -1,2 +1,6 @@
 logstash-custom.jar
 .*sw?
+
+build
+dist
+lib/logstash-jna.jar

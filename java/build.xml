@@ -39,6 +39,13 @@
         <jar jarfile="${dist}/lib/posix-signals-${DSTAMP}.jar" basedir="${build}"/>
     </target>
 
+    <target name="jna-logstash">
+        <zip destfile="${dist}/lib/logstash-jna.jar">
+            <zipgroupfileset dir="lib" includes="*.jar"/>
+        </zip>
+    </target>
+
+
     <target name="clean"
         description="clean up" >
         <!-- Delete the ${build} and ${dist} directory trees -->

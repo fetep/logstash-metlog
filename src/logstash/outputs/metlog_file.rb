@@ -1,5 +1,6 @@
 require "logstash/namespace"
 require "logstash/outputs/base"
+require "java"
 
 # File output.
 #
@@ -49,7 +50,7 @@ class LogStash::Outputs::MetlogFile < LogStash::Outputs::Base
     # will block as events come in.
     # Only flush the bufffers when we have idle time
     class FileClient
-        #include com.mozilla.services.ISignalHandler
+        include com.mozilla.services.ISignalFunction
 
         public
         def initialize(path, logger)
@@ -60,12 +61,14 @@ class LogStash::Outputs::MetlogFile < LogStash::Outputs::Base
             @logfile = open(path)
 
             # Hook SIGHUP (1) to this client
-            #com.mozilla.services.POSIX.signal(1, this)
+            @signal = com.mozilla.services.Signal.getInstance()
+            @signal.register_callback(1, this)
         end 
 
         public
-        def callback(signal)
-
+        def invoke(signal)
+            # TODO: do something here to respond to a signal
+            puts  "Got signal: #{signal}"
         end
 
         public
