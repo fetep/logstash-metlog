@@ -1,0 +1,19 @@
+"/tmp/logstash/metlog.log" {
+    rotate 5
+    size=64M
+    nocreate
+    postrotate
+        # change this to whatever you're doing to manage your process
+        # and send it a SIGHUP
+        # svc -h will send SIGHUP to logstash if managed by
+        # daemontools
+        # /sbin/svc -h /service/logstash
+
+        # This line is obviously wrong - but i have no other Java
+        # processes, so it's good enough for testing logstash
+        /usr/bin/killall -HUP java
+        
+        # TODO: put the command to stash the metlog.log.0 file into
+        # HDFS here
+    endscript
+}
