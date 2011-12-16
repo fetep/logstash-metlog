@@ -78,13 +78,18 @@ class LogStash::Outputs::MetlogFile < LogStash::Outputs::Base
 
         private
         def rotate_file
+            # Scan for a new filename
+            # This is just utterly perplexing.
+            # Time.now.utc.iso8601 doesn't work in this extension
+            # Wondering if this is classloader related??? 
+            # Works fine in irb, but not at all when inside the
+            # logstash process
             if @logfile
                 @logfile.close
             end
 
-            # Scan for a new filename
             idx = 0
-            dstamp = Date.today.iso8601
+            dstamp = Time.new.strftime("%Y%m%d_%H%M%S")
             fname = "#{@path}.#{dstamp}.#{idx}"
 
             while File.exists?(fname)
