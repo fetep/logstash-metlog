@@ -1,6 +1,8 @@
 require "logstash/namespace"
 require "logstash/outputs/base"
 require "java"
+require 'time'
+require 'date'
 
 # File output.
 #
@@ -58,17 +60,41 @@ class LogStash::Outputs::MetlogFile < LogStash::Outputs::Base
             @queue  = Queue.new
             @logger = logger
 
-            @logfile = open(path)
+            @logfile = open(@path)
 
             # Hook SIGHUP (1) to this client
             @signal = com.mozilla.services.Signal.getInstance()
-            @signal.register_callback(1, this)
+            @signal.register_callback(1, self)
         end 
 
         public
         def invoke(signal)
-            # TODO: do something here to respond to a signal
-            puts  "Got signal: #{signal}"
+            if signal == 1
+                rotate_file
+            else
+                raise ArgumentError, "Unexpected signal: #{signal}"
+            end
+        end
+
+        private
+        def rotate_file
+            if @logfile
+                @logfile.close
+            end
+
+            # Scan for a new filename
+            idx = 0
+            dstamp = Date.today.iso8601
+            fname = "#{@path}.#{dstamp}.#{idx}"
+
+            while File.exists?(fname)
+                idx += 1
+                fname = "#{@path}.#{dstamp}.#{idx}"
+            end
+
+            File.rename(@path, fname)
+            @logfile = open(@path)
+            puts "Rotate log file! : #{fname}"
         end
 
         public

@@ -39,10 +39,27 @@
         <jar jarfile="${dist}/lib/posix-signals-${DSTAMP}.jar" basedir="${build}"/>
     </target>
 
+    <target name="jar-dist" depends="compile"
+        description="generate the distribution" >
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/lib"/>
+
+        <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+        <jar jarfile="${dist}/lib/posix-signals-${DSTAMP}-allinone.jar" basedir="${build}">
+            <zipgroupfileset dir="lib" includes="jna*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.mozilla.services.POSIX"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="jna-logstash">
-        <zip destfile="${dist}/lib/logstash-jna.jar">
+        <jar jarfile="${dist}/lib/logstash-jna.jar">
             <zipgroupfileset dir="lib" includes="*.jar"/>
-        </zip>
+            <manifest>
+                <attribute name="Main-Class" value="logstash.runner"/>
+            </manifest>
+        </jar>
     </target>
 
 

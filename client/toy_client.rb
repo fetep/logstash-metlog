@@ -3,6 +3,7 @@
 require "socket"
 require 'ffi-rzmq'
 require "json"
+require 'time'
 
 DEBUG = true
 
@@ -147,7 +148,7 @@ SEVERITY = {
 
 def zeromq_main
     # Now broadcast exactly 10 updates with pause
-    transport = ZeroMQTransport.new("tcp://127.0.0.1:5565", 8)
+    transport = ZeroMQTransport.new("tcp://127.0.0.1:5565", 1000)
 
     # Note that the ZMQ client will asynchronously bind into the
     # subscriber so the first couple messages may be lost until the
@@ -167,9 +168,10 @@ def zeromq_main
     }
 
     sleep 2
-    50.times do 
+    100.times do |x|
+        #msg1['timestamp'] = Time.now.iso8601
+        #msg1['counter'] = x
         log(transport, msg1)
-        log(transport, msg2)
     end
 
     transport.destroy
